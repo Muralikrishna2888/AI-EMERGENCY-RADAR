@@ -1,1 +1,103 @@
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #080d18;
+  color: #eaf2ff;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 7%;
+  background: #101827;
+  border-bottom: 1px solid #24334b;
+}
+
+header h2 {
+  color: #00d9ff;
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+#connectionText {
+  color: #00e6a0;
+  font-size: 13px;
+}
+
+main {
+  max-width: 900px;
+  margin: 55px auto;
+  padding: 25px;
+}
+
+main > p:first-child {
+  color: #00d9ff;
+  letter-spacing: 3px;
+  font-size: 12px;
+}
+
+h1 {
+  font-size: clamp(32px, 7vw, 58px);
+  margin: 20px 0;
+  line-height: 1.15;
+}
+
+h2 {
+  margin: 35px 0 15px;
+}
+
+main > p {
+  color: #9aabc4;
+  margin-bottom: 12px;
+}
+
+#sosButton {
+  width: 100%;
+  max-width: 350px;
+  padding: 20px;
+  margin-top: 15px;
+  background: #e51d3d;
+  color: white;
+  border: 1px solid #ff526c;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 0 25px #e51d3d55;
+}
+
+#sosButton:active {
+  transform: scale(0.97);
+}
+
+#internetStatus,
+#alertList {
+  background: #111d2e;
+  border: 1px solid #263951;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+
+@media (max-width: 600px) {
+  header {
+    padding: 18px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  main {
+    margin: 25px auto;
+    padding: 20px;
+  }
+}
+
