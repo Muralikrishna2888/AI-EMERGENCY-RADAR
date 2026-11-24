@@ -1,4 +1,3 @@
-
 const connectionText = document.getElementById("connectionText");
 const internetStatus = document.getElementById("internetStatus");
 const sosButton = document.getElementById("sosButton");
@@ -179,4 +178,102 @@ cancelBtn.addEventListener("click", () => {
     "Test alert cancelled.";
 
 });
+
+// ===== VOICE DETECTION SYSTEM =====
+
+const startVoice = document.getElementById("startVoice");
+const stopVoice = document.getElementById("stopVoice");
+const voiceStatus = document.getElementById("voiceStatus");
+const voiceMessage = document.getElementById("voiceMessage");
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+let recognition = null;
+let voiceActive = false;
+
+if (!SpeechRecognition) {
+  voiceStatus.textContent = "Voice detection not supported";
+  voiceMessage.textContent =
+    "Please try a supported browser such as Chrome.";
+} else {
+  recognition = new SpeechRecognition();
+
+  recognition.lang = "en-IN";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    voiceStatus.textContent = "Microphone: ACTIVE";
+    voiceMessage.textContent =
+      "Listening for HELP. Demo mode only.";
+  };
+
+  recognition.onresult = (event) => {
+    const result =
+      event.results[event.results.length - 1][0]
+        .transcript.toLowerCase();
+
+    voiceMessage.textContent = "Heard: " + result;
+
+    const helpWords = [
+      "help",
+      "help me",
+      "సహాయం",
+      "కాపాడండి"
+    ];
+
+    const detected = helpWords.some(word =>
+      result.includes(word)
+    );
+
+    if (detected && monitoringActive) {
+      voiceMessage.textContent =
+        "HELP detected! Starting TEST countdown.";
+
+      if (!countdownTimer) {
+        simulateBtn.click();
+      }
+    }
+  };
+
+  recognition.onerror = (event) => {
+    voiceMessage.textContent =
+      "Voice error: " + event.error;
+  };
+
+  recognition.onend = () => {
+    if (voiceActive) {
+      voiceStatus.textContent = "Microphone: Paused";
+      voiceMessage.textContent =
+        "Listening stopped. Restart voice detection if needed.";
+      voiceActive = false;
+    }
+  };
+
+  startVoice.addEventListener("click", () => {
+    if (!monitoringActive) {
+      voiceMessage.textContent =
+        "First activate START MONITORING.";
+      return;
+    }
+
+    if (!voiceActive) {
+      voiceActive = true;
+      recognition.start();
+    }
+  });
+
+  stopVoice.addEventListener("click", () => {
+    voiceActive = false;
+
+    if (recognition) {
+      recognition.stop();
+    }
+
+    voiceStatus.textContent = "Microphone: OFF";
+    voiceMessage.textContent = "Voice detection stopped.";
+  });
+}
 
