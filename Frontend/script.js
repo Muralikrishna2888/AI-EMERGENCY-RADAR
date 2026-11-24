@@ -90,3 +90,93 @@ window.addEventListener("offline", updateConnection);
 updateConnection();
 showAlerts();
 
+// ===== AI EMERGENCY RADAR - DEMO DETECTION =====
+
+const startBtn = document.getElementById("startDetection");
+const simulateBtn = document.getElementById("simulateEmergency");
+const cancelBtn = document.getElementById("cancelAlert");
+
+const detectionStatus =
+  document.getElementById("detectionStatus");
+
+const detectionMessage =
+  document.getElementById("detectionMessage");
+
+let monitoringActive = false;
+let countdownTimer = null;
+let countdownValue = 10;
+
+startBtn.addEventListener("click", () => {
+  monitoringActive = true;
+
+  detectionStatus.textContent = "Detection: ACTIVE";
+  detectionStatus.style.color = "#00e6a0";
+
+  detectionMessage.textContent =
+    "Demo monitoring is active. Waiting for simulated event.";
+});
+
+simulateBtn.addEventListener("click", () => {
+  if (!monitoringActive) {
+    detectionMessage.textContent =
+      "Please start monitoring first.";
+    return;
+  }
+
+  if (countdownTimer) return;
+
+  countdownValue = 10;
+
+  detectionMessage.textContent =
+    "TEST EVENT DETECTED! SOS in " +
+    countdownValue + " seconds. Press CANCEL to stop.";
+
+  countdownTimer = setInterval(() => {
+    countdownValue--;
+
+    if (countdownValue > 0) {
+      detectionMessage.textContent =
+        "TEST SOS in " + countdownValue +
+        " seconds. Press CANCEL to stop.";
+    } else {
+      clearInterval(countdownTimer);
+      countdownTimer = null;
+
+      const testAlert = {
+        time: new Date().toLocaleString(),
+        status: navigator.onLine
+          ? "Automatic demo alert - Cloud not connected"
+          : "Automatic demo alert - Saved offline"
+      };
+
+      alerts.unshift(testAlert);
+      alerts = alerts.slice(0, 10);
+
+      try {
+        localStorage.setItem(
+          "emergencyAlerts",
+          JSON.stringify(alerts)
+        );
+        showAlerts();
+
+        detectionMessage.textContent =
+          "TEST ALERT SAVED LOCALLY.";
+      } catch {
+        detectionMessage.textContent =
+          "Unable to save test alert.";
+      }
+    }
+  }, 1000);
+});
+
+cancelBtn.addEventListener("click", () => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+
+  detectionMessage.textContent =
+    "Test alert cancelled.";
+
+});
+
