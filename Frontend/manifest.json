@@ -1,1 +1,10 @@
-
+{
+  "name": "AI Emergency Radar",
+  "short_name": "Emergency Radar",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080d18",
+  "theme_color": "#080d18",
+  "description": "Science fair emergency awareness demo"
+}
