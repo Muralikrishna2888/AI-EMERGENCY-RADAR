@@ -1,84 +1,102 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101827">
+  <meta name="theme-color" content="#080d18">
+
   <title>AI Emergency Radar</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" href="./style.css">
+  <link rel="manifest" href="./manifest.json">
 </head>
+
 <body>
+
   <header>
-    <h2>✦ AI EMERGENCY RADAR</h2>
-    <span id="connectionText">Checking connection...</span>
+    <h2>AI EMERGENCY RADAR</h2>
+    <span id="connectionText">CHECKING...</span>
   </header>
 
   <main>
-    <p>SCIENCE FAIR PROJECT</p>
-    <h1>Emergency Awareness.<br>Faster Alerts.</h1>
-    <p>Emergency Detection & Alert System</p>
 
-    <h2>Send a Test SOS</h2>
-    <p>Demo mode — test alerts only.</p>
-    <button id="sosButton">TRIGGER TEST ALERT</button>
+    <section class="hero">
+      <p>SMART EMERGENCY DETECTION SYSTEM</p>
+      <h1>Safety Through Intelligence</h1>
+      <p>Detect. Alert. Protect.</p>
+    </section>
 
-    <h2>System Status</h2>
-    <p>Website: Loaded</p>
-    <p id="internetStatus">Internet: Checking...</p>
-    <p>Alert Delivery: Coming Soon</p>
-    <p>Detection System: Coming Soon</p>
+    <section class="panel">
+      <h2>System Status</h2>
+      <p id="internetStatus">Internet: Checking...</p>
+      <p id="systemStatus">System: Ready</p>
+    </section>
 
-    
-<section id="detectionPanel">
-  <h2>AI Detection System</h2>
+    <section class="panel">
+      <h2>Manual SOS</h2>
+      <p>Science Fair Test Mode</p>
+      <button id="sosButton">TRIGGER TEST SOS</button>
+    </section>
 
-  <p id="detectionStatus">
-    Detection: Not Started
-  </p>
+    <section class="panel">
+      <h2>Automatic Detection</h2>
 
-  <button id="startDetection">
-    START MONITORING
-  </button>
+      <p id="detectionStatus">Detection: OFF</p>
 
-  <button id="simulateEmergency">
-    SIMULATE EMERGENCY
-  </button>
+      <button id="startDetection">START MONITORING</button>
 
-  <button id="cancelAlert">
-    CANCEL ALERT
-  </button>
+      <button id="simulateEmergency">
+        SIMULATE EMERGENCY
+      </button>
 
-  <p id="detectionMessage">
-    System is waiting for activation.
-  </p>
-</section>
-    
-    <h2>Recent Alerts</h2>
-    <div id="alertList">No alerts yet.</div>
+      <button id="cancelAlert">CANCEL ALERT</button>
+
+      <p id="detectionMessage">
+        Waiting for activation.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Voice Detection</h2>
+
+      <p id="voiceStatus">Microphone: OFF</p>
+
+      <button id="startVoice">
+        START VOICE DETECTION
+      </button>
+
+      <button id="stopVoice">
+        STOP VOICE DETECTION
+      </button>
+
+      <p id="voiceMessage">
+        Waiting for microphone permission.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Alerts</h2>
+      <div id="alertList">No alerts yet.</div>
+    </section>
+
   </main>
 
-  
-<div id="voicePanel">
-  <h2>Voice Detection</h2>
+  <footer>
+    <p>AI EMERGENCY RADAR</p>
+    <p>Science Fair Project | Demo Mode</p>
+  </footer>
 
-  <p id="voiceStatus">Microphone: OFF</p>
+  <script src="./script.js"></script>
 
-  <button id="startVoice">
-    START VOICE DETECTION
-  </button>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./service-worker.js")
+          .catch(error => console.error(error));
+      });
+    }
+  </script>
 
-  <button id="stopVoice">
-    STOP VOICE DETECTION
-  </button>
-
-  <p id="voiceMessage">
-    Waiting for microphone permission.
-  </p>
-</div>
-  
-  <script src="script.js" defer></script>
 </body>
 </html>
-
