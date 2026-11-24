@@ -101,3 +101,43 @@ main > p {
   }
 }
 
+
+#detectionPanel {
+  margin-top: 35px;
+  padding: 22px;
+  background: #111d2e;
+  border: 1px solid #263951;
+  border-radius: 14px;
+}
+
+#detectionPanel button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 9px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#startDetection {
+  background: #087f65;
+  color: white;
+}
+
+#simulateEmergency {
+  background: #e51d3d;
+  color: white;
+}
+
+#cancelAlert {
+  background: #35445a;
+  color: white;
+}
+
+#detectionMessage {
+  margin-top: 15px;
+  color: #00d9ff;
+}
+
