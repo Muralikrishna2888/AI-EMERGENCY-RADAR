@@ -1,7 +1,36 @@
-const connectionText = document.getElementById("connectionText");
-const internetStatus = document.getElementById("internetStatus");
-const sosButton = document.getElementById("sosButton");
-const alertList = document.getElementById("alertList");
+// ==========// AI EMERGENCY RADAR // Main JavaScript// =========
+
+const $ = (id) => document.getElementById(id);
+
+const connectionText = $("connectionText");
+const internetStatus = $("internetStatus");
+const systemStatus = $("systemStatus");
+
+const sosButton = $("sosButton");
+
+const startDetection = $("startDetection");
+const simulateEmergency = $("simulateEmergency");
+const cancelAlert = $("cancelAlert");
+
+const detectionStatus = $("detectionStatus");
+const detectionMessage = $("detectionMessage");
+
+const startVoice = $("startVoice");
+const stopVoice = $("stopVoice");
+
+const voiceStatus = $("voiceStatus");
+const voiceMessage = $("voiceMessage");
+
+const alertList = $("alertList");
+
+let monitoringActive = false;
+let countdownTimer = null;
+let countdown = 10;
+
+let recognition = null;
+let voiceActive = false;
+
+// ==========// LOAD SAVED ALERTS // ==========
 
 let alerts = [];
 
@@ -9,27 +38,76 @@ try {
   alerts = JSON.parse(
     localStorage.getItem("emergencyAlerts") || "[]"
   );
-} catch {
+
+  if (!Array.isArray(alerts)) alerts = [];
+
+} catch (error) {
   alerts = [];
 }
 
-// Internet status
+// ========// INTERNET STATUS // ========
+
 function updateConnection() {
+
   if (navigator.onLine) {
+
     connectionText.textContent = "● ONLINE";
     connectionText.style.color = "#00e6a0";
+
     internetStatus.textContent =
       "Internet: Connected";
+
   } else {
+
     connectionText.textContent = "● OFFLINE";
     connectionText.style.color = "#ffb020";
+
     internetStatus.textContent =
-      "Internet: Disconnected - Offline mode";
+      "Internet: Disconnected";
+
   }
 }
 
-// Display saved alerts
+window.addEventListener("online", updateConnection);
+window.addEventListener("offline", updateConnection);
+
+// ===========// SAVE ALERT // ===========
+
+function saveAlert(message) {
+
+  const alert = {
+    time: new Date().toLocaleString(),
+    status: message
+  };
+
+  alerts.unshift(alert);
+  alerts = alerts.slice(0, 10);
+
+  try {
+
+    localStorage.setItem(
+      "emergencyAlerts",
+      JSON.stringify(alerts)
+    );
+
+    showAlerts();
+
+    return true;
+
+  } catch (error) {
+
+    console.error("Storage error:", error);
+    return false;
+
+  }
+}
+
+// =================================
+// DISPLAY ALERTS
+// =================================
+
 function showAlerts() {
+
   alertList.replaceChildren();
 
   if (alerts.length === 0) {
@@ -37,141 +115,134 @@ function showAlerts() {
     return;
   }
 
-  alerts.forEach((alert) => {
-    const item = document.createElement("p");
-    item.textContent =
-      "TEST SOS | " + alert.time + " | " + alert.status;
+  alerts.forEach(alert => {
 
-    item.style.padding = "10px";
-    item.style.marginBottom = "8px";
-    item.style.color = "#ff687c";
+    const item = document.createElement("p");
+
+    item.textContent =
+      "TEST SOS | " +
+      alert.time +
+      " | " +
+      alert.status;
+
+    item.style.padding = "12px";
+    item.style.marginBottom = "10px";
+    item.style.color = "#ff7187";
 
     alertList.appendChild(item);
+
   });
 }
 
-// Test SOS button
+// =================================
+// MANUAL TEST SOS
+// =================================
+
 sosButton.addEventListener("click", () => {
-  const now = new Date().toLocaleString();
 
-  const newAlert = {
-    time: now,
-    status: navigator.onLine
-      ? "Saved locally - Cloud not connected"
-      : "Saved offline - Not sent"
-  };
-
-  alerts.unshift(newAlert);
-  alerts = alerts.slice(0, 10);
-
-  try {
-    localStorage.setItem(
-      "emergencyAlerts",
-      JSON.stringify(alerts)
-    );
-  } catch {
-    alert("Could not save alert on this device.");
-  }
-
-  showAlerts();
+  const saved = saveAlert(
+    navigator.onLine
+      ? "Manual test - Cloud not connected"
+      : "Manual test - Saved offline, not sent"
+  );
 
   alert(
-    "TEST SOS created!\n\n" +
-    "Status: " + newAlert.status
+    saved
+      ? "TEST SOS created and saved locally."
+      : "Could not save test alert."
   );
+
 });
 
-// Listen for internet changes
-window.addEventListener("online", updateConnection);
-window.addEventListener("offline", updateConnection);
+// =================================
+// START MONITORING
+// =================================
 
-// Start
-updateConnection();
-showAlerts();
+startDetection.addEventListener("click", () => {
 
-// ===== AI EMERGENCY RADAR - DEMO DETECTION =====
-
-const startBtn = document.getElementById("startDetection");
-const simulateBtn = document.getElementById("simulateEmergency");
-const cancelBtn = document.getElementById("cancelAlert");
-
-const detectionStatus =
-  document.getElementById("detectionStatus");
-
-const detectionMessage =
-  document.getElementById("detectionMessage");
-
-let monitoringActive = false;
-let countdownTimer = null;
-let countdownValue = 10;
-
-startBtn.addEventListener("click", () => {
   monitoringActive = true;
 
-  detectionStatus.textContent = "Detection: ACTIVE";
+  detectionStatus.textContent =
+    "Detection: ACTIVE";
+
   detectionStatus.style.color = "#00e6a0";
 
+  systemStatus.textContent =
+    "System: Demo monitoring active";
+
   detectionMessage.textContent =
-    "Demo monitoring is active. Waiting for simulated event.";
+    "Waiting for a simulated event.";
+
 });
 
-simulateBtn.addEventListener("click", () => {
+// =================================
+// EMERGENCY COUNTDOWN
+// =================================
+
+function startCountdown() {
+
   if (!monitoringActive) {
+
     detectionMessage.textContent =
-      "Please start monitoring first.";
+      "Start monitoring first.";
+
     return;
   }
 
-  if (countdownTimer) return;
+  if (countdownTimer !== null) return;
 
-  countdownValue = 10;
+  countdown = 10;
 
   detectionMessage.textContent =
-    "TEST EVENT DETECTED! SOS in " +
-    countdownValue + " seconds. Press CANCEL to stop.";
+    "TEST EVENT DETECTED! Alert in 10 seconds.";
 
   countdownTimer = setInterval(() => {
-    countdownValue--;
 
-    if (countdownValue > 0) {
+    countdown--;
+
+    if (countdown > 0) {
+
       detectionMessage.textContent =
-        "TEST SOS in " + countdownValue +
+        "TEST SOS in " + countdown +
         " seconds. Press CANCEL to stop.";
+
     } else {
+
       clearInterval(countdownTimer);
       countdownTimer = null;
 
-      const testAlert = {
-        time: new Date().toLocaleString(),
-        status: navigator.onLine
+      const saved = saveAlert(
+        navigator.onLine
           ? "Automatic demo alert - Cloud not connected"
-          : "Automatic demo alert - Saved offline"
-      };
+          : "Automatic demo alert - Saved offline, not sent"
+      );
 
-      alerts.unshift(testAlert);
-      alerts = alerts.slice(0, 10);
+      detectionMessage.textContent = saved
+        ? "TEST ALERT SAVED LOCALLY."
+        : "Could not save alert.";
 
-      try {
-        localStorage.setItem(
-          "emergencyAlerts",
-          JSON.stringify(alerts)
-        );
-        showAlerts();
-
-        detectionMessage.textContent =
-          "TEST ALERT SAVED LOCALLY.";
-      } catch {
-        detectionMessage.textContent =
-          "Unable to save test alert.";
-      }
     }
-  }, 1000);
-});
 
-cancelBtn.addEventListener("click", () => {
-  if (countdownTimer) {
+  }, 1000);
+
+}
+
+simulateEmergency.addEventListener(
+  "click",
+  startCountdown
+);
+
+// =================================
+// CANCEL ALERT
+// =================================
+
+cancelAlert.addEventListener("click", () => {
+
+  if (countdownTimer !== null) {
+
     clearInterval(countdownTimer);
     countdownTimer = null;
+
   }
 
   detectionMessage.textContent =
@@ -179,25 +250,24 @@ cancelBtn.addEventListener("click", () => {
 
 });
 
-// ===== VOICE DETECTION SYSTEM =====
-
-const startVoice = document.getElementById("startVoice");
-const stopVoice = document.getElementById("stopVoice");
-const voiceStatus = document.getElementById("voiceStatus");
-const voiceMessage = document.getElementById("voiceMessage");
+// =================================
+// VOICE DETECTION
+// =================================
 
 const SpeechRecognition =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
 
-let recognition = null;
-let voiceActive = false;
-
 if (!SpeechRecognition) {
-  voiceStatus.textContent = "Voice detection not supported";
+
+  voiceStatus.textContent =
+    "Voice detection unavailable";
+
   voiceMessage.textContent =
-    "Please try a supported browser such as Chrome.";
+    "This browser does not support speech recognition.";
+
 } else {
+
   recognition = new SpeechRecognition();
 
   recognition.lang = "en-IN";
@@ -205,75 +275,114 @@ if (!SpeechRecognition) {
   recognition.interimResults = false;
 
   recognition.onstart = () => {
-    voiceStatus.textContent = "Microphone: ACTIVE";
+
+    voiceStatus.textContent =
+      "Microphone: ACTIVE";
+
     voiceMessage.textContent =
-      "Listening for HELP. Demo mode only.";
+      "Listening. Demo mode only.";
+
   };
 
   recognition.onresult = (event) => {
-    const result =
+
+    const transcript =
       event.results[event.results.length - 1][0]
         .transcript.toLowerCase();
 
-    voiceMessage.textContent = "Heard: " + result;
+    voiceMessage.textContent =
+      "Heard: " + transcript;
 
     const helpWords = [
       "help",
       "help me",
+      "help please",
       "సహాయం",
       "కాపాడండి"
     ];
 
     const detected = helpWords.some(word =>
-      result.includes(word)
+      transcript.includes(word)
     );
 
     if (detected && monitoringActive) {
-      voiceMessage.textContent =
-        "HELP detected! Starting TEST countdown.";
 
-      if (!countdownTimer) {
-        simulateBtn.click();
-      }
+      voiceMessage.textContent =
+        "HELP phrase detected. Starting TEST countdown.";
+
+      startCountdown();
+
     }
+
   };
 
   recognition.onerror = (event) => {
+
     voiceMessage.textContent =
       "Voice error: " + event.error;
+
   };
 
   recognition.onend = () => {
-    if (voiceActive) {
-      voiceStatus.textContent = "Microphone: Paused";
-      voiceMessage.textContent =
-        "Listening stopped. Restart voice detection if needed.";
-      voiceActive = false;
-    }
+
+    voiceStatus.textContent =
+      "Microphone: OFF";
+
+    voiceActive = false;
+
   };
 
   startVoice.addEventListener("click", () => {
+
     if (!monitoringActive) {
+
       voiceMessage.textContent =
-        "First activate START MONITORING.";
+        "Start monitoring first.";
+
       return;
     }
 
     if (!voiceActive) {
-      voiceActive = true;
-      recognition.start();
+
+      try {
+
+        voiceActive = true;
+        recognition.start();
+
+      } catch (error) {
+
+        voiceActive = false;
+
+        voiceMessage.textContent =
+          "Could not start microphone.";
+
+      }
+
     }
+
   });
 
   stopVoice.addEventListener("click", () => {
+
     voiceActive = false;
 
-    if (recognition) {
-      recognition.stop();
-    }
+    recognition.stop();
 
-    voiceStatus.textContent = "Microphone: OFF";
-    voiceMessage.textContent = "Voice detection stopped.";
+    voiceStatus.textContent =
+      "Microphone: OFF";
+
+    voiceMessage.textContent =
+      "Voice detection stopped.";
+
   });
+
 }
 
+// =================================
+// INITIALIZE
+// =================================
+
+updateConnection();
+showAlerts();
+
+systemStatus.textContent = "System: Ready";
