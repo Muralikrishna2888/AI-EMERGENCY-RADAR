@@ -97,6 +97,65 @@
       });
     }
   </script>
+  
+<!-- OFFLINE SOS MODULE -->
 
+<section id="offlineSOS"
+style="
+  background:#101827;
+  color:white;
+  padding:25px;
+  text-align:center;
+  border-radius:20px;
+  margin:20px auto;
+  max-width:420px;
+  font-family:Arial;
+">
+
+  <h2 style="color:#ff4545;letter-spacing:3px;">
+    OFFLINE SOS
+  </h2>
+
+  <p>Emergency Communication System</p>
+
+  <div id="sosStatus" style="color:#65e6a2;">
+    SYSTEM READY
+  </div>
+
+  <br>
+
+  <button
+    onclick="activateOfflineSOS()"
+    style="
+      width:160px;
+      height:160px;
+      border-radius:50%;
+      background:#e51f35;
+      color:white;
+      border:7px solid #ff7777;
+      font-size:35px;
+      font-weight:bold;
+    ">
+    SOS
+  </button>
+
+  <p id="sosMessage">
+    Waiting for emergency
+  </p>
+
+</section>
+
+<script>
+function activateOfflineSOS() {
+
+  document.getElementById("sosStatus")
+    .innerText = "SOS ACTIVATED";
+
+  document.getElementById("sosMessage")
+    .innerText = "Local SOS demo activated";
+}
+</script>
+
+<!-- END OFFLINE SOS MODULE -->
 </body>
 </html>
