@@ -148,11 +148,27 @@ style="
 <script>
 function activateOfflineSOS() {
 
-  document.getElementById("sosStatus")
-    .innerText = "SOS ACTIVATED";
+  const saved = saveAlert(
+    "Offline SOS TEST - Saved locally, not transmitted"
+  );
 
-  document.getElementById("sosMessage")
-    .innerText = "Local SOS demo activated";
+  if (saved) {
+
+    document.getElementById("sosStatus")
+      .innerText = "SOS ACTIVATED";
+
+    document.getElementById("sosMessage")
+      .innerText = "SOS test saved in Recent Alerts";
+
+  } else {
+
+    document.getElementById("sosStatus")
+      .innerText = "STORAGE ERROR";
+
+    document.getElementById("sosMessage")
+      .innerText = "Could not save SOS alert";
+
+  }
 }
 </script>
 
