@@ -173,5 +173,66 @@ function activateOfflineSOS() {
 </script>
 
 <!-- END OFFLINE SOS MODULE -->
+
+  
+<!-- BLUETOOTH SUPPORT TEST -->
+
+<section style="
+  background:#101827;
+  color:white;
+  padding:20px;
+  margin:20px auto;
+  border-radius:15px;
+  text-align:center;
+  max-width:420px;
+">
+
+  <h2 style="color:#55c7ff;">
+    BLUETOOTH TEST
+  </h2>
+
+  <p>Check Bluetooth browser support</p>
+
+  <button
+    onclick="checkBluetoothSupport()"
+    style="
+      padding:15px 25px;
+      background:#168cff;
+      color:white;
+      border:0;
+      border-radius:10px;
+      font-weight:bold;
+    ">
+    CHECK BLUETOOTH
+  </button>
+
+  <p id="bluetoothStatus">
+    Waiting for test...
+  </p>
+
+</section>
+
+<script>
+function checkBluetoothSupport() {
+
+  const status =
+    document.getElementById("bluetoothStatus");
+
+  if ("bluetooth" in navigator) {
+
+    status.innerText =
+      "Bluetooth API is supported";
+
+  } else {
+
+    status.innerText =
+      "Bluetooth API is not supported in this browser";
+
+  }
+}
+</script>
+
+<!-- END BLUETOOTH SUPPORT TEST -->
+  
 </body>
 </html>
