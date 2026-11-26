@@ -1,4 +1,4 @@
-const CACHE_NAME = "radar-cache-v1";
+const CACHE_NAME = "radar-cache-v2";
 
 const FILES = [
   "./",
