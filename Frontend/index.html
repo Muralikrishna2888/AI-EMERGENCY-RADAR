@@ -174,8 +174,7 @@ function activateOfflineSOS() {
 
 <!-- END OFFLINE SOS MODULE -->
 
-  
-<!-- BLUETOOTH SUPPORT TEST -->
+<!-- BLUETOOTH DEVICE SCAN -->
 
 <section style="
   background:#101827;
@@ -188,13 +187,13 @@ function activateOfflineSOS() {
 ">
 
   <h2 style="color:#55c7ff;">
-    BLUETOOTH TEST
+    BLUETOOTH DEVICE SCAN
   </h2>
 
-  <p>Check Bluetooth browser support</p>
+  <p>Search for nearby BLE devices</p>
 
   <button
-    onclick="checkBluetoothSupport()"
+    onclick="scanBluetoothDevices()"
     style="
       padding:15px 25px;
       background:#168cff;
@@ -203,36 +202,73 @@ function activateOfflineSOS() {
       border-radius:10px;
       font-weight:bold;
     ">
-    CHECK BLUETOOTH
+    SCAN DEVICES
   </button>
 
   <p id="bluetoothStatus">
-    Waiting for test...
+    Ready to scan
+  </p>
+
+  <p id="bluetoothDevice">
+    No device selected
   </p>
 
 </section>
 
 <script>
-function checkBluetoothSupport() {
+async function scanBluetoothDevices() {
 
   const status =
     document.getElementById("bluetoothStatus");
 
-  if ("bluetooth" in navigator) {
+  const deviceText =
+    document.getElementById("bluetoothDevice");
+
+  if (!navigator.bluetooth) {
+    status.innerText =
+      "Bluetooth is not supported in this browser";
+    return;
+  }
+
+  if (!window.isSecureContext) {
+    status.innerText =
+      "HTTPS connection is required";
+    return;
+  }
+
+  try {
 
     status.innerText =
-      "Bluetooth API is supported";
+      "Searching for BLE devices...";
 
-  } else {
+    const device =
+      await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true
+      });
+
+    deviceText.innerText =
+      "Selected Device: " +
+      (device.name || "Unknown Device");
 
     status.innerText =
-      "Bluetooth API is not supported in this browser";
+      "Device discovered successfully";
+
+  } catch (error) {
+
+    if (error.name === "NotFoundError") {
+      status.innerText =
+        "No device selected";
+    } else {
+      status.innerText =
+        "Scan cancelled or failed";
+    }
 
   }
 }
 </script>
 
-<!-- END BLUETOOTH SUPPORT TEST -->
+<!-- END BLUETOOTH DEVICE SCAN -->
+  
   
 </body>
 </html>
