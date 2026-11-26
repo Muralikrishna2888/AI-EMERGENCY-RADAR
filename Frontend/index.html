@@ -241,10 +241,32 @@ async function scanBluetoothDevices() {
     status.innerText =
       "Searching for BLE devices...";
 
-    const device =
-      await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true
-      });
+const device =
+  await navigator.bluetooth.requestDevice({
+    acceptAllDevices: true
+  });
+
+   device.addEventListener("gattserverdisconnected", () => {
+  status.innerText = "Bluetooth device disconnected";
+});
+
+if (!device.gatt) {
+  status.innerText = "GATT connection is not available";
+  return;
+}
+
+status.innerText = "Connecting to device...";
+
+try {
+  const server = await device.gatt.connect();
+
+  if (server.connected) {
+    status.innerText = "Bluetooth Connected Successfully";
+  }
+
+} catch (error) {
+  status.innerText = "Connection failed: " + error.message;
+} 
 
     deviceText.innerText =
       "Selected Device: " +
